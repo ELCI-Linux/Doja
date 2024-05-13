@@ -1,35 +1,60 @@
 #! /bin/bash
-# Doja.sh contents
 
-helper=Doja-default
-vers='1.0'
-        cowsay "Moo?"
-        read moo
-	ymoo=$(echo $moo | grep -c "moo moo moo")
-        if [ $ymoo -gt '0' ]; then
-        cowsay "Moo, mooo, moo, mooo, moo, mooo, moo, moo"
-        # go to doja
-        cd /dev/doja
-        # count the number of songs
-        songs=$(ls -1 | wc -l)
-        cowsay "there are $songs songs I know"
-	# select a random number between 1 and nth number of songs 
-        cowsay "number selection was $selection from the $songs songs I know"
-	selection=$(shuf -i 1-$songs -n 1)
-        # count the number of lines within the song
-        linenum=$(cat songs/$selection.txt | wc -l )
-        # select a random number between 1 and nth number of lines
-	 numline=$(shuf -i 1-$linenum -n 1)
-	# print line
+	source ./bashrc
+
+# Migrate this section to startup_redundancy.sh
+
+	if [ ${#Doja_Folder} -eq 0 ]; then
+	Doja_Folder="./Doja" &&\
+	Doja_speak "No Doja Folder detected in bashrc, using default"
+	else
+	xcowsay "Doja Folder detected in bashrc"
+	fi
+
+
+
+# Migrate this section to chat_logic.sh
 	
-	lyrics=$(head -n $numline songs/$selection.txt | tail -4)
-	title=$(head -n $selection songlist.txt | tail -1)
-        text=$title:$lyricsecho
-	echo $text | cowsay
-	# exit
-        exit
-        elif [ $ymoo -eq '0' ]; then
-        #ANGRY MOO!!
-        cowsay "MOOoooVVEE!!!!" "I'm not in the mooOOOOooooodddd!!!"
-        exit
-        fi
+	if [[ $active_chat == "" ]]||[[ $chat_status == *"initated"* ]]; then
+	Doja_speak "$Greeting"
+	elif ([[ $active_chat != "" ]]&&[ ${#last_message} -gt 0]); then 
+	Doja_speak "$last_message"
+	fi
+	
+
+
+# Arming hotkey
+
+
+	source $Doja_Folder/modules/hotkey.sh
+
+
+
+	until [[ $status != *"Running"* ]]; do
+	
+
+	if [ $hotkey == *"Active"* ]; then
+	
+	# Use the session manager to determine the appropriate chat to use
+	source $Doja_Folder/modules/session_manager.sh
+
+	# Use the prompt window to receive user input
+	source $Doja_Folder/modules/prompt_window.sh
+
+	# Print prompt to 
+	# Parse user input to auto-gpt
+	response=$(bash $Doja_Folder/modules/prompt_processing.sh)
+
+	# Print response to chat history
+	echo "At $time Doja responded: $response" >> $Doja_Folder/history/$chat_ID
+	
+
+	hotkey="inactive"
+
+	elif [[ $hotkey == *"suspend"* ]]; then
+	status="shutdown" && exit
+	else
+	sleep 10s
+	fi ||\	
+	xcowsay "Sorry there was an error with Doja" && exit
+	done 
