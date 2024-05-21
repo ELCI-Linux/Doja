@@ -41,7 +41,7 @@ doja_avatar_tw_string="--no-wrap"
 fi
 
 # Understanding the following command:
-xcowsay $doja_orientation --cow-size="$doja_size" $doja_avatar_string $doja_at_string $dpja_bubble_at_string $doja_avatar_tw_string
+xcowsay $doja_orientation --cow-size="$doja_size" $doja_avatar_string $doja_at_string $dpja_bubble_at_string $doja_avatar_tw_string $reply
 # doja_orientation will determine whether the text bubble is displayed to the left or right of the avatar
 # doja_size will determine the size of the avatar
 # doja_avatar string modifies the command to display a specific avatar instead of text
